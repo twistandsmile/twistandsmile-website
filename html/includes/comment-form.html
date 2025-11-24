@@ -1,16 +1,27 @@
-<form action="https://api.staticman.net/v3/entry/github/twistandsmile/twistandsmile-website/main/comments" method="POST">
-    <label>
-        Name:
-        <input type="text" name="fields[name]" required>
-    </label>
-
-    <label>
-        Comment:
-        <textarea name="fields[message]" required></textarea>
-    </label>
-
-    <!-- optional: identify article -->
-    <input type="hidden" name="options[slug]" value="my-article-slug">
-
-    <button type="submit">Submit Comment</button>
+<form id="commentForm">
+    <input name="name" type="text" placeholder="Your name">
+    <textarea name="comment" placeholder="Your comment" required></textarea>
+    <input name="slug" type="hidden" value="my-article-slug">
+    <button type="submit">Submit</button>
 </form>
+
+<script>
+    document.getElementById("commentForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const data = Object.fromEntries(new FormData(e.target).entries());
+
+        const res = await fetch("https://twistandsmile-comment.delicate-queen-35a1.workers.dev/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+
+        if (res.ok) {
+            alert("Comment submitted and awaiting moderation!");
+            e.target.reset();
+        } else {
+            alert("Error submitting comment.");
+        }
+    });
+</script>
