@@ -1,5 +1,9 @@
 name: Convert issues to JSON comments
 
+permissions:
+  contents: write
+  issues: write
+
 on:
   issues:
     types: [opened]
