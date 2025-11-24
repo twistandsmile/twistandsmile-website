@@ -5,6 +5,7 @@
     <title>Twist and Smile - Motorcycle News & Stories</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/main.css">
+    <script src="js/jquery-3.7.1.min.js"></script>
 </head>
 
 <body>
@@ -88,7 +89,7 @@
 
     </div>
 
-    <object type="text/html" data="/html/includes/comment-form.html"></object>
+    <div id="comment-form-container"></div>
 </div>
 
 <footer>
@@ -96,7 +97,10 @@
 </footer>
 
 <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
+    $(function () {
+        document.getElementById("year").textContent = new Date().getFullYear();
+        $("#comment-form-container").load("/html/includes/comment-form.html");
+    });
 
     // Smooth scroll helper
     function scrollToSection(id) {
