@@ -1,50 +1,60 @@
-name: Convert issues to JSON comments
-
-permissions:
-  contents: write
-  issues: write
+name: Convert issues to JSON comment PRs
 
 on:
   issues:
     types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   add-comment:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      # 1. Checkout full history so branches/PRs work properly
+      - name: Checkout full repo history
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false   # we'll use BOT_PAT instead
 
+      # 2. Create JSON comment file from issue body
       - name: Create JSON comment file
+        id: makefile
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
           BODY="$ISSUE_BODY"
 
-          # Extract fields using awk
+          # Expecting something like:
+          # name: Alice
+          # comment: |
+          #   This is my comment
+          # slug: my-article-slug
+
           name=$(echo "$BODY" | awk -F': ' '/^name:/{print $2}')
           slug=$(echo "$BODY" | awk -F': ' '/^slug:/{print $2}')
 
-          # Extract multiline comment
+          # Extract multiline comment block between "comment:" and "slug:"
           comment=$(echo "$BODY" \
             | sed -n '/^comment:/,/^slug:/p' \
             | sed '1d;$d')
 
-          # Default values
-          if [ -z "$slug" ]; then slug="general"; fi
-          if [ -z "$name" ]; then name="Anonymous"; fi
+          [ -z "$slug" ] && slug="general"
+          [ -z "$name" ] && name="Anonymous"
 
           mkdir -p "comments/$slug"
-
           filename="comments/$slug/$(date +%s).json"
 
-          # JSON-escape everything safely (using Python)
-          esc_name=$(printf "%s" "$name" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
-          esc_slug=$(printf "%s" "$slug" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
+          # JSON-escape using Python
+          esc_name=$(printf "%s" "$name"    | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
+          esc_slug=$(printf "%s" "$slug"    | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
           esc_comment=$(printf "%s" "$comment" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
 
-          # Write JSON using printf — safe in YAML
+          # Write JSON (using printf to keep YAML happy)
           printf "{\n" > "$filename"
           printf "  \"name\": %s,\n" "$esc_name" >> "$filename"
           printf "  \"date\": \"%s\",\n" "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> "$filename"
@@ -52,20 +62,77 @@ jobs:
           printf "  \"comment\": %s\n" "$esc_comment" >> "$filename"
           printf "}\n" >> "$filename"
 
-      - name: Commit comment file
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add comments || true
+          echo "filename=$filename" >> $GITHUB_OUTPUT
+          echo "slug=$slug" >> $GITHUB_OUTPUT
 
-          # Avoid failing if nothing to commit
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-            exit 0
+      # 3. Debug: make sure file exists where we think it does
+      - name: Debug repo state
+        run: |
+          echo "=== Repo files after creating comment file ==="
+          ls -R .
+
+      # 4. Configure git identity
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # 5. Create new branch and commit the comment file, then push with BOT_PAT
+      - name: Create and push branch
+        id: newbranch
+        env:
+          BOT_PAT: ${{ secrets.BOT_PAT }}
+        run: |
+          branch="comment-${{ github.event.issue.number }}"
+          echo "branch=$branch" >> $GITHUB_OUTPUT
+
+          # Use BOT_PAT for pushing
+          git remote set-url origin "https://x-access-token:${BOT_PAT}@github.com/${{ github.repository }}.git"
+
+          git checkout -b "$branch"
+
+          if [ ! -f "${{ steps.makefile.outputs.filename }}" ]; then
+            echo "ERROR: Comment file not found: ${% raw %}{{% endraw %} steps.makefile.outputs.filename }}"
+            ls -R .
+            exit 1
           fi
 
-          git commit -m "Add JSON comment from issue #${{ github.event.issue.number }}"
-          git push
+          git add "${{ steps.makefile.outputs.filename }}"
 
+          if git diff --cached --quiet; then
+            echo "ERROR: No changes to commit — cannot create PR."
+            exit 1
+          fi
+
+          git commit -m "Add comment file from issue #${{ github.event.issue.number }}"
+          git push --set-upstream origin "$branch"
+
+      # 6. Install GitHub CLI
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git gh
+
+      # 7. Authenticate gh CLI with BOT_PAT (not GITHUB_TOKEN)
+      - name: Authenticate gh CLI
+        env:
+          BOT_PAT: ${{ secrets.BOT_PAT }}
+        run: |
+          echo "$BOT_PAT" | gh auth login --with-token
+
+      # 8. Create the Pull Request
+      - name: Create Pull Request
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          SLUG: ${{ steps.makefile.outputs.slug }}
+          BRANCH: ${{ steps.newbranch.outputs.branch }}
+        run: |
+          gh pr create \
+            --title "Comment from issue #$ISSUE_NUMBER" \
+            --body "This PR adds a comment for article **$SLUG**." \
+            --base main \
+            --head "$BRANCH"
+
+      # 9. Close the original issue
       - name: Close the issue
         uses: peter-evans/close-issue@v2
