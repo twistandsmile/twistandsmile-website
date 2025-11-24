@@ -1,42 +1,66 @@
-name: Convert issues to comments
+name: Convert issues to JSON comments
 
 on:
   issues:
     types: [opened]
 
 jobs:
-  build:
+  add-comment:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Create comment file
+      - name: Create JSON comment file
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
-          mkdir -p comments
-          BODY="${{ github.event.issue.body }}"
-          
-          # Extract fields
-          name=$(echo "$BODY" | grep "^name:" | cut -d':' -f2- | xargs)
-          slug=$(echo "$BODY" | grep "^slug:" | cut -d':' -f2- | xargs)
-          comment=$(echo "$BODY" | sed -n '/^comment:/,/^slug:/p' | sed '1d;$d')
-          
-          mkdir -p "comments/$slug"
-          file="comments/$slug/$(date +%s).yml"
-          
-          {
-            echo "name: \"$name\""
-            echo "date: \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\""
-            echo "comment: |"
-            echo "$comment" | sed 's/^/  /'
-          } > "$file"
+          BODY="$ISSUE_BODY"
 
-      - name: Commit files
+          # Extract fields using awk
+          name=$(echo "$BODY" | awk -F': ' '/^name:/{print $2}')
+          slug=$(echo "$BODY" | awk -F': ' '/^slug:/{print $2}')
+
+          # Extract multiline comment
+          comment=$(echo "$BODY" \
+            | sed -n '/^comment:/,/^slug:/p' \
+            | sed '1d;$d')
+
+          # Default values
+          if [ -z "$slug" ]; then slug="general"; fi
+          if [ -z "$name" ]; then name="Anonymous"; fi
+
+          mkdir -p "comments/$slug"
+
+          filename="comments/$slug/$(date +%s).json"
+
+          # JSON-escape everything safely (using Python)
+          esc_name=$(printf "%s" "$name" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
+          esc_slug=$(printf "%s" "$slug" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
+          esc_comment=$(printf "%s" "$comment" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
+
+          # Write JSON using printf — safe in YAML
+          printf "{\n" > "$filename"
+          printf "  \"name\": %s,\n" "$esc_name" >> "$filename"
+          printf "  \"date\": \"%s\",\n" "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> "$filename"
+          printf "  \"slug\": %s,\n" "$esc_slug" >> "$filename"
+          printf "  \"comment\": %s\n" "$esc_comment" >> "$filename"
+          printf "}\n" >> "$filename"
+
+      - name: Commit comment file
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add comments
-          git commit -m "Add comment for $slug"
+          git add comments || true
+
+          # Avoid failing if nothing to commit
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "Add JSON comment from issue #${{ github.event.issue.number }}"
           git push
 
       - name: Close the issue
