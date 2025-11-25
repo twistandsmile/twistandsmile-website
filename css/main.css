@@ -82,14 +82,14 @@
     }
 
     .logo span {
-       content:url('../img/logo.webp');
+       content:url('/img/logo.webp');
        max-height: 3rem;
        margin-right: 0.5rem;
     }
 
     /* HERO */
     .hero {
-      background: url('../img/banner.png') center/cover no-repeat;
+      background: url('/img/banner.png') center/cover no-repeat;
       padding: 21rem 0;
       position: relative;
     }
