@@ -11,95 +11,48 @@
 <body>
 
 <!-- NAV -->
-<header>
-    <div class="container nav">
-        <div class="logo"><span></span>Twist and Smile</div>
-        <nav class="nav-links">
-            <a href="#">Home</a>
-            <a href="#">News</a>
-            <a href="#">Reviews</a>
-            <a href="#">Gear</a>
-            <a href="#">Events</a>
-        </nav>
-    </div>
-</header>
+<header id="nav"></header>
 
-<!-- HERO -->
+<!-- MAIN HERO -->
 <section class="hero">
     <div class="hero-content">
         <h1 class="hero-title">Twist and Smile</h1>
-        <p class="hero-sub">Motorcycle news, off-road adventures, personal stories, and bike culture</p>
+        <p class="hero-sub">Motorcycle news, off-road, travels, and bike culture</p>
         <a onclick="scrollToSection('main')"><span></span></a>
     </div>
 </section>
+
 
 <!-- MAIN CONTENT -->
 <div id="main" class="container">
     <div class="content-area">
 
-        <!-- LEFT COLUMN – BLOG POSTS -->
         <div>
-            <article class="article-card">
-                <img src="https://images.unsplash.com/photo-1589861357281-23b9c873c23e?q=80&auto=format" alt="">
-                <h2 class="article-title">The Return of Classic Café Racers</h2>
-                <div class="article-meta">January 2025 · 6 min read</div>
-                <p>Retro styling meets modern engineering in the new wave of café racers. We explore the machines redefining the category and the culture behind them…</p>
-            </article>
-
-            <article class="article-card">
-                <img src="https://images.unsplash.com/photo-1504215680853-026ed2a45def?q=80&auto=format" alt="">
-                <h2 class="article-title">Top 5 Adventure Bikes for Long-Distance Touring</h2>
-                <div class="article-meta">December 2024 · 8 min read</div>
-                <p>From rugged off-road capability to highway comfort, these adventure bikes are dominating long-distance travel this year…</p>
-            </article>
-
-            <article class="article-card">
-                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&auto=format" alt="">
-                <h2 class="article-title">Why Custom Builds Are Booming Again</h2>
-                <div class="article-meta">December 2024 · 5 min read</div>
-                <p>The custom motorcycle scene is exploding in popularity — workshops and DIY builders reveal what’s driving the movement forward…</p>
+            <article class="welcome-card">
+                <img src="img/hello.jpg" alt="">
+                <h2 class="article-title">Welcome to your new source of motorcycle focused content !</h2>
+                <p>Hi everyone, my name is Clément, I am a 36 years old dad living in Europe, that happen to also be a passionate motorcyclist !</p>
+                <p>This will be my safe space to share my thoughts and experiences about my motorcycle passion. I always was an introvert, so this will allow me to have a controlled environnement to easily share things with complete strangers !</p>
+                <p>As I grow older and maybe more mature, I tend to value human communication and interaction more and more. My past self would have laughed at this sentence, as I much greater preferred just staying alone, enjoying my things almost in secret.</p>
+                <p>But now, things have changed, and I feel the need of sharing about what I do and love with other enthusiasts.</p>
+                <p>&nbsp;</p>
+                <p>So, if you also like motorcycling and everything around it, stay with me, and take part in the journey !</p>
             </article>
         </div>
 
-        <!-- RIGHT COLUMN – SIDEBAR -->
-        <aside>
-
-            <div class="sidebar-section">
-                <div class="sidebar-title">Latest Posts</div>
-                <div class="sidebar-list">
-                    <a href="#">Electric Bikes You Should Watch in 2025</a>
-                    <a href="#">How to Maintain a Vintage Engine</a>
-                    <a href="#">The Best Riding Jackets Under $200</a>
-                    <a href="#">European Touring Routes for Beginners</a>
-                </div>
-            </div>
-
-            <div class="sidebar-section">
-                <div class="sidebar-title">Categories</div>
-                <div class="sidebar-list">
-                    <a href="#">News</a>
-                    <a href="#">Gear Reviews</a>
-                    <a href="#">Bike Builds</a>
-                    <a href="#">Adventure</a>
-                    <a href="#">Riding Tips</a>
-                </div>
-            </div>
-
-        </aside>
-
     </div>
-
-    <div id="comment-form-container"></div>
 </div>
 
 <footer>
-    © <span id="year"></span> ThrottleJournal — All Rights Reserved.
+    © <span id="year"></span> Twist and Smile — All Rights Reserved.
 </footer>
 
 <script>
     $(function () {
         document.getElementById("year").textContent = new Date().getFullYear();
-        $("#comment-form-container").load("/html/includes/comment-form.html");
+        $("#nav").load("html/includes/nav.html", function () {
+            $('#menu-link-home').addClass('selected');
+        });
     });
 
     // Smooth scroll helper

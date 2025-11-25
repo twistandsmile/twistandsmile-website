@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Twist and Smile - Motorcycle News & Stories</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/main.css">
+    <script src="../js/jquery-3.7.1.min.js"></script>
+</head>
+
+<body>
+
+<!-- NAV -->
+<header id="nav"></header>
+
+<!-- MAIN HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title"></h1>
+        <p class="hero-sub">Personal thoughts & stories, travels and more !</p>
+        <a onclick="scrollToSection('main')"><span></span></a>
+    </div>
+</section>
+
+
+<!-- MAIN CONTENT -->
+<div id="main" class="container">
+    <div class="content-area">
+
+        <div id="articles-container"></div>
+
+    </div>
+</div>
+
+<footer>
+    © <span id="year"></span> Twist and Smile — All Rights Reserved.
+</footer>
+
+<script src="/js/blog-articles.js"></script>
+<script>
+    $(function () {
+        $.urlParam = function(name){
+            const results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results==null) {
+                return null;
+            }
+            return decodeURI(results[1]) || 0;
+        }
+        let articleType = $.urlParam("type");
+        document.getElementById("year").textContent = new Date().getFullYear();
+        $("#nav").load("./includes/nav.html", function () {
+            $("#menu-link-" + articleType).addClass('selected');
+        });
+
+        $('.hero-title').text(articleType.toUpperCase());
+        $('.hero-sub').text(articleType === 'blog' ? 'Personal thoughts & stories, travels and more !' :
+                            articleType === 'news' ? 'Motorcycle news, bike culture and events !' :
+                            articleType === 'adventures' ? 'Off-road escapes, moto camping, and freedom !' :
+                                                     '');
+
+        for(const article of articles) {
+            const element = '<article class="article-card" data-slug="' + article.slug + '">' +
+                '                <div style="height: 185px">' +
+                '                    <img height=185 src="/img/' + articleType + '/' + article.slug + '/' + article.img + '">' +
+                '                </div>' +
+                '                <aside style="align-content: center">' +
+                '                    <h2 class="article-title">' + article.title + '</h2>' +
+                '                    <div class="article-meta">' + new Date(article.date).toDateString() + ' · ' + article.duration + ' read</div>' +
+                '                    <p>' + article.description + '</p>' +
+                '                </aside>' +
+                '            </article>';
+            $("#articles-container").append(element);
+        }
+
+        $(".article-card").each(function() {
+            $(this).click(function() {
+                location.href='/html/' + articleType + '/' + $(this).data('slug') + '.html';
+            });
+        });
+
+    });
+
+    // Smooth scroll helper
+    function scrollToSection(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.scrollIntoView({behavior: "smooth", block: "start"});
+    }
+</script>
+
+</body>
+</html>

@@ -66,6 +66,12 @@
       color: var(--brown);
     }
 
+    .nav-links a.selected {
+      color: var(--brown);
+      text-decoration: underline;
+      font-weight: bold;
+    }
+
     .logo {
       font-size: 1.2rem;
       font-weight: bold;
@@ -84,8 +90,8 @@
 
     /* HERO */
     .hero {
-      background: url('../img/banner.webp') center/cover no-repeat;
-      padding: 20rem 0;
+      background: url('../img/banner.png') center/cover no-repeat;
+      padding: 21rem 0;
       position: relative;
     }
 
@@ -93,7 +99,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.55);
+      background: rgba(0,0,0,0.40);
     }
 
     .hero-content {
@@ -171,13 +177,29 @@
       padding-top: 4rem;
     }
 
-    .content-area {
-      display: grid;
-      grid-template-columns: 2.1fr 1fr;
-      gap: 2rem;
+    /* ARTICLE CARDS */
+    .welcome-card {
+        background: var(--bg-light);
+        padding: 1.2rem;
+        border-radius: var(--radius);
+        border: 1px solid rgba(255,255,255,0.06);
+        margin-bottom: 1.4rem;
+        transition: transform var(--transition), box-shadow var(--transition);
     }
 
-    /* ARTICLE CARDS */
+    .welcome-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+        border-color: var(--brown-dark);
+    }
+
+    .welcome-card img {
+        width: 100%;
+        border-radius: var(--radius);
+        filter: brightness(70%);
+        margin-bottom: 1rem;
+    }
+
     .article-card {
       background: var(--bg-light);
       padding: 1.2rem;
@@ -185,6 +207,10 @@
       border: 1px solid rgba(255,255,255,0.06);
       margin-bottom: 1.4rem;
       transition: transform var(--transition), box-shadow var(--transition);
+      display: grid;
+      grid-template-columns: 25% 1fr;
+      gap: 2rem;
+      cursor: pointer;
     }
 
     .article-card:hover {
@@ -193,10 +219,15 @@
       border-color: var(--brown-dark);
     }
 
+    .article-card:hover img {
+        filter: brightness(85%);
+    }
+
     .article-card img {
       width: 100%;
       border-radius: var(--radius);
-      margin-bottom: 1rem;
+      filter: brightness(70%);
+      object-fit: cover;
     }
 
     .article-title {
