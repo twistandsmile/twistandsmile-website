@@ -14,7 +14,7 @@ const articles = {
             "description": "Find out about the advantages of going small, that convinced me that I was done with big motorbikes",
             "duration": "17 min",
             "img": "himalayan.jpg",
-            "slug": "6-reasons-why-you-dont-need-a-big"
+            "slug": "reasons-why-you-dont-need-a-big"
         },
         {
             "title": "I defied the trend, and went back to a \"beginner\" motorcycle",

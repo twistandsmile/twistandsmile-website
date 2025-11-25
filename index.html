@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <title>Twist and Smile - Motorcycle News & Stories</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/main.css">
-    <script src="js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <script src="/js/jquery-3.7.1.min.js"></script>
+    <script src="/js/common.js"></script>
 </head>
 
 <body>
@@ -22,7 +24,6 @@
     </div>
 </section>
 
-
 <!-- MAIN CONTENT -->
 <div id="main" class="container">
     <div class="content-area">
@@ -30,7 +31,7 @@
         <div>
             <article class="welcome-card">
                 <img src="img/hello.jpg" alt="">
-                <h2 class="article-title">Welcome to your new source of motorcycle focused content !</h2>
+                <h2 class="welcome-title">Welcome to your new source of motorcycle focused content !</h2>
                 <p>Hi everyone, my name is Clément, I am a 36 years old dad living in Europe, that happen to also be a passionate motorcyclist !</p>
                 <p>This will be my safe space to share my thoughts and experiences about my motorcycle passion. I always was an introvert, so this will allow me to have a controlled environnement to easily share things with complete strangers !</p>
                 <p>As I grow older and maybe more mature, I tend to value human communication and interaction more and more. My past self would have laughed at this sentence, as I much greater preferred just staying alone, enjoying my things almost in secret.</p>
@@ -46,22 +47,6 @@
 <footer>
     © <span id="year"></span> Twist and Smile — All Rights Reserved.
 </footer>
-
-<script>
-    $(function () {
-        document.getElementById("year").textContent = new Date().getFullYear();
-        $("#nav").load("html/includes/nav.html", function () {
-            $('#menu-link-home').addClass('selected');
-        });
-    });
-
-    // Smooth scroll helper
-    function scrollToSection(id) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        el.scrollIntoView({behavior: "smooth", block: "start"});
-    }
-</script>
 
 </body>
 </html>

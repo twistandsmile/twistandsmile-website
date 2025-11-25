@@ -1,0 +1,28 @@
+    .welcome-card {
+        background: var(--bg-light);
+        padding: 1.2rem;
+        border-radius: var(--radius);
+        border: 1px solid rgba(255,255,255,0.06);
+        margin-bottom: 1.4rem;
+        transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .welcome-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+        border-color: var(--brown-dark);
+    }
+
+    .welcome-card img {
+        width: 100%;
+        border-radius: var(--radius);
+        filter: brightness(70%);
+        margin-bottom: 1rem;
+    }
+
+    .welcome-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--brown);
+    }
