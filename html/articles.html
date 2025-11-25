@@ -36,7 +36,7 @@
     © <span id="year"></span> Twist and Smile — All Rights Reserved.
 </footer>
 
-<script src="/js/blog-articles.js"></script>
+<script src="/js/article-data.js"></script>
 <script>
     $(function () {
         $.urlParam = function(name){
@@ -58,7 +58,7 @@
                             articleType === 'adventures' ? 'Off-road escapes, moto camping, and freedom !' :
                                                      '');
 
-        for(const article of articles) {
+        for(const article of articles[articleType]) {
             const element = '<article class="article-card" data-slug="' + article.slug + '">' +
                 '                <div style="height: 185px">' +
                 '                    <img height=185 src="/img/' + articleType + '/' + article.slug + '/' + article.img + '">' +
