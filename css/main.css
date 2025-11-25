@@ -1,3 +1,8 @@
+    @font-face {
+        font-family: spectral;
+        src: url(/fonts/spectral.regular.ttf);
+    }
+
     :root {
       --brown: #c7a371;        /* light brown */
       --brown-dark: #a07d50;   /* darker brown */
@@ -14,7 +19,7 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: "Segoe UI", sans-serif;
+      font-family: spectral;
     }
 
     body {
