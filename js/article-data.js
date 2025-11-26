@@ -21,7 +21,7 @@ const articles = {
             "date": "2025-05-10",
             "description": "Discover how by going less, I actually got more !",
             "duration": "5 min",
-            "img": "preview.jpg",
+            "img": "himy.jpg",
             "slug": "i-defied-the-trend-and-went-back"
         }
     ],

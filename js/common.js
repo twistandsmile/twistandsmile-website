@@ -12,18 +12,7 @@
         if(articleType != null) {
             loadNav(articleType);
         } else {
-            let articleTypes = ['blog', 'news', 'adventures'];
-            let loaded = false;
-            for(type of articleTypes) {
-                if(window.location.href.indexOf('/' + type + '/') != -1) {
-                    loadNav(type);
-                    loaded = true;
-                    break;
-                }
-            }
-            if(!loaded) {
-                loadNav('home');
-            }
+            loadNav(getArticleTypeFromUrl());
         }
         $('.hero').css('background', 'url("/img/banner.png") center/cover no-repeat');
     });
@@ -39,4 +28,14 @@
         var el = document.getElementById(id);
         if (!el) return;
         el.scrollIntoView({behavior: "smooth", block: "start"});
+    }
+
+    function getArticleTypeFromUrl() {
+        const articleTypes = ['blog', 'news', 'adventures'];
+        for(const type of articleTypes) {
+            if(window.location.href.indexOf('/' + type + '/') !== -1) {
+                return type;
+            }
+        }
+        return 'home';
     }

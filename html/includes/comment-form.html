@@ -1,27 +1,16 @@
-<form id="commentForm">
-    <input name="name" type="text" placeholder="Your name">
-    <textarea name="comment" placeholder="Your comment" required></textarea>
-    <input name="slug" type="hidden" value="my-article-slug">
-    <button type="submit">Submit</button>
-</form>
+<div class="form-container-wrapper">
+    <div class="form-container">
+        <h2>Leave a Comment</h2>
+        <form id="comment-form">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your name..." />
 
-<script>
-    document.getElementById("commentForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
+            <label for="comment">Comment</label>
+            <textarea id="comment" name="comment" placeholder="Your comment..."></textarea>
 
-        const data = Object.fromEntries(new FormData(e.target).entries());
+            <input name="slug" type="hidden" value="">
 
-        const res = await fetch("https://twistandsmile-comment.delicate-queen-35a1.workers.dev/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        });
-
-        if (res.ok) {
-            alert("Comment submitted and awaiting moderation!");
-            e.target.reset();
-        } else {
-            alert("Error submitting comment.");
-        }
-    });
-</script>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
