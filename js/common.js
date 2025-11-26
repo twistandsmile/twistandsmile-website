@@ -25,6 +25,7 @@
                 loadNav('home');
             }
         }
+        $('.hero').css('background', 'url("/img/banner.png") center/cover no-repeat');
     });
 
     function loadNav(toHighlight) {

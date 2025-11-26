@@ -81,15 +81,23 @@
       align-items: center;
     }
 
-    .logo span {
-       content:url('/img/logo.webp');
-       max-height: 3rem;
-       margin-right: 0.5rem;
+    .logo > div {
+      height: 3rem;
+      width: 3rem;
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+      margin-right: 0.5rem;
+    }
+
+    .logo > div > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     /* HERO */
     .hero {
-      background: url('/img/banner.png') center/cover no-repeat;
       padding: 21rem 0;
       position: relative;
     }
