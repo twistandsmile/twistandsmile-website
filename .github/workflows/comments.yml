@@ -50,10 +50,10 @@ jobs:
             printf 'const comments = { "comments": [] };\n' > "$filename"
           fi
 
-          # JSON-escape using Python
-          esc_name=$(printf "%s" "$name"    | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
-          esc_slug=$(printf "%s" "$slug"    | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
-          esc_comment=$(printf "%s" "$comment" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
+          # Replace all double quotes with single quotes
+          esc_name=${name//\"/\'}
+          esc_slug=${slug//\"/\'}
+          esc_comment=${comment//\"/\'}
           esc_date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
           # Build JSON object
