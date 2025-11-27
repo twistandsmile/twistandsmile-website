@@ -21,7 +21,8 @@ jobs:
           fetch-depth: 0
           persist-credentials: false   # we'll use BOT_PAT instead
 
-      # 2. Create JSON comment file from issue body
+      # 2. Create JSON comment and save it as a JS file from issue body
+      # -- We make a JS file because JSON files are not served by GitHub Pages
       - name: Create JSON comment file
         id: makefile
         env:
@@ -47,7 +48,7 @@ jobs:
           [ -z "$name" ] && name="Anonymous"
 
           mkdir -p "comments/$slug"
-          filename="comments/$slug/$(date +%s).json"
+          filename="comments/$slug/$(date +%s).js"
 
           # JSON-escape using Python
           esc_name=$(printf "%s" "$name"    | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
@@ -55,12 +56,12 @@ jobs:
           esc_comment=$(printf "%s" "$comment" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
 
           # Write JSON (using printf to keep YAML happy)
-          printf "{\n" > "$filename"
+          printf "const comment-$(date +%s) = {\n" > "$filename"
           printf "  \"name\": %s,\n" "$esc_name" >> "$filename"
           printf "  \"date\": \"%s\",\n" "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> "$filename"
           printf "  \"slug\": %s,\n" "$esc_slug" >> "$filename"
           printf "  \"comment\": %s\n" "$esc_comment" >> "$filename"
-          printf "}\n" >> "$filename"
+          printf "};\n" >> "$filename"
 
           echo "filename=$filename" >> $GITHUB_OUTPUT
           echo "slug=$slug" >> $GITHUB_OUTPUT
