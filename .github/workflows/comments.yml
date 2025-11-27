@@ -50,10 +50,23 @@ jobs:
             printf 'const comments = { "comments": [] };\n' > "$filename"
           fi
 
-          # JSON-escape using Python
-          esc_name=$(printf "%s" "$name"    | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
-          esc_slug=$(printf "%s" "$slug"    | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
-          esc_comment=$(printf "%s" "$comment" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
+          # Remove accidental surrounding quotes ONLY if both ends have them
+          strip_quotes() {
+            v="$1"
+            if echo "$v" | grep -q '^".*"$'; then
+            v="${v#\"}"   # remove leading "
+            v="${v%\"}"   # remove trailing "
+            fi
+            printf '%s' "$v"
+          }
+          clean_name=$(strip_quotes "$name")
+          clean_slug=$(strip_quotes "$slug")
+          clean_comment=$(strip_quotes "$comment")
+
+          # Escape internal quotes for JSON
+          esc_name=$(printf '%s' "$clean_name" | sed 's/"/\\"/g')
+          esc_slug=$(printf '%s' "$clean_slug" | sed 's/"/\\"/g')
+          esc_comment=$(printf '%s' "$clean_comment" | sed 's/"/\\"/g')
           esc_date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
           # Build JSON object
