@@ -23,23 +23,18 @@ jobs:
 
       # 2. Create JSON comment and save it as a JS file from issue body
       # -- We make a JS file because JSON files are not served by GitHub Pages
-      - name: Create JSON comment file
+      - name: Create/append to comments.js
         id: makefile
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
+          set +e   # prevent abort on minor parsing errors
+
           BODY="$ISSUE_BODY"
 
-          # Expecting something like:
-          # name: Alice
-          # comment: |
-          #   This is my comment
-          # slug: my-article-slug
-
+          # Extract fields
           name=$(echo "$BODY" | awk -F': ' '/^name:/{print $2}')
           slug=$(echo "$BODY" | awk -F': ' '/^slug:/{print $2}')
-
-          # Extract multiline comment block between "comment:" and "slug:"
           comment=$(echo "$BODY" \
             | sed -n '/^comment:/,/^slug:/p' \
             | sed '1d;$d')
@@ -48,20 +43,32 @@ jobs:
           [ -z "$name" ] && name="Anonymous"
 
           mkdir -p "comments/$slug"
-          filename="comments/$slug/$(date +%s).js"
+          filename="comments/$slug/comments.js"
+
+          # Create file if missing
+          if [ ! -e "$filename" ]; then
+            printf 'const comments = { "comments": [] };\n' > "$filename"
+          fi
 
           # JSON-escape using Python
           esc_name=$(printf "%s" "$name"    | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
           esc_slug=$(printf "%s" "$slug"    | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
           esc_comment=$(printf "%s" "$comment" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
+          esc_date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-          # Write JSON (using printf to keep YAML happy)
-          printf "const comment-$(date +%s) = {\n" > "$filename"
-          printf "  \"name\": %s,\n" "$esc_name" >> "$filename"
-          printf "  \"date\": \"%s\",\n" "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> "$filename"
-          printf "  \"slug\": %s,\n" "$esc_slug" >> "$filename"
-          printf "  \"comment\": %s\n" "$esc_comment" >> "$filename"
-          printf "};\n" >> "$filename"
+          # Build JSON object
+          new_obj=$(printf '{ "slug": "%s", "name": "%s", "date": "%s", "comment": "%s" }' \
+            "$esc_slug" "$esc_name" "$esc_date" "$esc_comment")
+
+          # Insert the new object before the last closing bracket ']'
+          # Detect if array is empty
+          if grep -q '"comments": \[\s*]' "$filename"; then
+            # No comma needed – empty list
+            sed -i "s/]/  $new_obj ]/" "$filename"
+          else
+            # Non-empty – add comma
+            sed -i "s/]/,  $new_obj ]/" "$filename"
+          fi
 
           echo "filename=$filename" >> $GITHUB_OUTPUT
           echo "slug=$slug" >> $GITHUB_OUTPUT
