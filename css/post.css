@@ -132,3 +132,52 @@ button {
 button:hover {
     background: var(--brown-dark);
 }
+
+/** COMMENTS **/
+.comments-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 0, 40px, 40px, 40px;
+}
+
+.comments-container {
+    background: rgba(255,255,255,0.1);
+    padding: 20px 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+    width: 100%;
+}
+
+.comment {
+    padding: 15px 0;
+    border-bottom: 1px solid #e2e2e2;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.comment:last-child {
+    border-bottom: none;
+}
+
+.comment-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px; /* controls space between name & date */
+}
+
+.comment-date {
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+.comment-name {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.comment-text {
+    font-size: 15px;
+    line-height: 1.5;
+    margin-top: 2px;
+}
