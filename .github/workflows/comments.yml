@@ -23,7 +23,7 @@ jobs:
 
       # 2. Create JSON comment and save it as a JS file from issue body
       # -- We make a JS file because JSON files are not served by GitHub Pages
-      - name: Create/append to comments.js
+      - name: Create/append to comments-data.js
         id: makefile
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
@@ -42,13 +42,7 @@ jobs:
           [ -z "$slug" ] && slug="general"
           [ -z "$name" ] && name="Anonymous"
 
-          mkdir -p "comments/$slug"
-          filename="comments/$slug/comments.js"
-
-          # Create file if missing
-          if [ ! -e "$filename" ]; then
-            printf 'const comments = { "comments": [] };\n' > "$filename"
-          fi
+          filename="js/comments-data.js"
 
           # Replace all double quotes with single quotes
           esc_name=${name//\"/\'}
@@ -62,7 +56,7 @@ jobs:
 
           # Insert the new object before the last closing bracket ']'
           # Detect if array is empty
-          if grep -q '"comments": \[\s*]' "$filename"; then
+          if grep -q 'comments = \[\s*]' "$filename"; then
             # No comma needed – empty list
             sed -i "s/]/  $new_obj ]/" "$filename"
           else
