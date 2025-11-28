@@ -31,14 +31,14 @@ $(function() {
         });
 
         $('.comment-area').append('<div class="comments-wrapper"><div class="comments-container"></div></div>');
-        if(comments.comments.length > 0) {
-            for(comment of comments.comments) {
+        const filteredComments = comments.filter(function(comment) { return comment.slug === slug });
+        if (filteredComments.length > 0) {
+            for (const comment of filteredComments) {
                 $('.comments-container').append('<div class="comment"><div class="comment-header"><span class="comment-name">' + comment.name + '</span><span class="comment-date">' + comment.date + '</span></div><span class="comment-text">' + comment.comment + '</span></div>');
             }
             $(".comment-date").each(function() {
                 const iso = $(this).text().trim();
                 const date = new Date(iso);
-                if (isNaN(date)) return;
 
                 // put full date in tooltip
                 $(this).attr("title", date.toDateString());
