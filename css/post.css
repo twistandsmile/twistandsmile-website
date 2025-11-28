@@ -88,15 +88,15 @@ ul > li > p {
     color: var(--brown);
 }
 
-label {
+.form-container label {
     display: block;
     margin-bottom: 6px;
     font-size: 14px;
     font-weight: 600;
 }
 
-input[type="text"],
-textarea {
+.form-container input[type="text"],
+.form-container textarea {
     width: 100%;
     padding: 10px 12px;
     margin-bottom: 16px;
@@ -106,18 +106,18 @@ textarea {
     transition: border-color 0.2s;
 }
 
-input[type="text"]:focus,
-textarea:focus {
+.form-container input[type="text"]:focus,
+.form-container textarea:focus {
     border-color: var(--brown);
     outline: none;
 }
 
-textarea {
+.form-container textarea {
     height: 120px;
     resize: vertical;
 }
 
-button {
+.form-container button {
     width: 100%;
     padding: 12px;
     background: var(--brown);
@@ -129,11 +129,17 @@ button {
     transition: background 0.2s;
 }
 
-button:hover {
+.form-container button:hover {
     background: var(--brown-dark);
 }
 
-/** COMMENTS **/
+.form-container button.disabled-button {
+    background: var(--muted) !important;
+    color: unset !important;
+    cursor: unset !important;
+}
+
+    /** COMMENTS **/
 .comments-wrapper {
     display: flex;
     justify-content: center;

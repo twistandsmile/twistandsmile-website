@@ -2,9 +2,7 @@ $(function() {
     const slug = getSlug();
     const articleType = getArticleTypeFromUrl();
 
-    const article = articles[articleType].filter(function(el) {
-        return el.slug === slug;
-    })[0];
+    const article = articles[articleType].filter(function(el) { return el.slug === slug; })[0];
     $('#title-area > h2').text(article.title);
     $('#title-area > h4').text(article.description);
     $('#title-area > small').text(new Date(article.date).toDateString() + ' · ' + article.duration + ' read');
@@ -14,6 +12,8 @@ $(function() {
         document.getElementById("comment-form").addEventListener("submit", async (e) => {
             e.preventDefault();
 
+            $('#comment-form > button[type="submit"]').prop("disabled", true);
+            $('#comment-form > button[type="submit"]').addClass("disabled-button")
             const data = Object.fromEntries(new FormData(e.target).entries());
 
             const res = await fetch("https://twistandsmile-comment.delicate-queen-35a1.workers.dev/", {
@@ -24,9 +24,13 @@ $(function() {
 
             if (res.ok) {
                 alert("Comment submitted and awaiting moderation!");
+                $('#comment-form > button[type="submit"]').removeProp("disabled");
+                $('#comment-form > button[type="submit"]').removeClass("disabled-button")
                 e.target.reset();
             } else {
                 alert("Error submitting comment.");
+                $('#comment-form > button[type="submit"]').removeProp("disabled");
+                $('#comment-form > button[type="submit"]').removeClass("disabled-button")
             }
         });
 
