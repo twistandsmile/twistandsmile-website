@@ -139,11 +139,12 @@ ul > li > p {
     cursor: unset !important;
 }
 
-    /** COMMENTS **/
+/** COMMENTS **/
 .comments-wrapper {
     display: flex;
     justify-content: center;
-    padding: 0, 40px, 40px, 40px;
+    padding: 0 40px 40px 40px;
+    margin-top: 1rem;
 }
 
 .comments-container {
@@ -186,4 +187,27 @@ ul > li > p {
     font-size: 15px;
     line-height: 1.5;
     margin-top: 2px;
+}
+
+/* MOBILE SECTION */
+@media (max-width: 600px) {
+    .content-area {
+        padding: 1rem !important;
+    }
+
+    .captioned-image-container {
+        padding: 1rem 0 !important;
+    }
+
+    ul {
+        margin-left: 1.5rem !important;
+    }
+
+    .form-container-wrapper {
+        padding: 0 !important;
+    }
+
+    .comments-wrapper {
+        padding: 0 !important;
+    }
 }
